@@ -1,0 +1,11 @@
+/* Set default styles for buttons with class .btn */
+#search-form .btn {
+    border-radius: 5px;
+    width:100%;
+    background-color:#AEAEAE
+}
+
+/* Set the style for the search button */
+#search-form .search-button {
+    background-color: #5098E6;
+}
