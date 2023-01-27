@@ -21,7 +21,15 @@ const searchHistory = JSON.parse(localStorage.getItem('history')) || [];
 loadHistory()
 
 // Apply jQuery event on form submission
-searchForm.submit(function (event) {
+$(document).on('click','.btn', function (event) {
+
+    const button = $(this)
+
+    if(button.attr("data-city")){
+        console.log("grey clicked")
+    } else {
+        console.log("blue clicked")
+    }
 
     // assign variable to user input
     const userInput = searchInput.val().trim()
@@ -61,6 +69,10 @@ function showWeather(userInput){
         if (response.length !== 0){
 
             console.log(response)
+
+            const longitude = response[0].lon
+            const latitude = response[0].lat
+            console.log(latitude, longitude)
 
         } else {
 
