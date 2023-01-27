@@ -76,10 +76,10 @@ function showWeather(userInput, isNewSearch) {
         // Check if the response is not empty, if it is, show an error message to the user
         if (response.length !== 0) {
 
+            // Longitude of returned city
             const longitude = response[0].lon
+            // Latitude of returned city
             const latitude = response[0].lat
-
-
 
             // Create a query string for the "Current weather data" to determine the Longitude and Latitude of the city
             // API endpoint: https://openweathermap.org/current
@@ -115,6 +115,13 @@ function showWeather(userInput, isNewSearch) {
 
                     console.log(weatherResponse)
                 })
+
+        } else {
+
+            // Show error message to user if City not found
+            showPopup(`${userInput} not found. Please try again`)
+        }
+    })
 
     // If the search is new, then add it to the history
     if (isNewSearch) {
