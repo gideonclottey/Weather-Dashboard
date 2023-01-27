@@ -7,6 +7,9 @@ const searchInput = $("#search-input")
 // Assign variable to div .history
 const historyBox = $("#history")
 
+// Assign variable to div #today
+const forecastToday = $("#today")
+
 // Assign variables to target Bootstrap modal title & content
 const popUp = $("#messageModal")
 const popUpTitle = $("#messageModalLabel")
@@ -16,7 +19,7 @@ const popUpContent = $(".modal-body")
 const apiKey = "f08da3f97e0c524e1f401f44d632c947"
 
 // Assign variable for search history (retrieve existing history or create new empty array[] if history is empty)
-const searchHistory = JSON.parse(localStorage.getItem('history')) || [];
+const searchHistory = JSON.parse(localStorage.getItem('history')) || []
 
 loadHistory()
 
@@ -62,7 +65,7 @@ function showWeather(userInput, isNewSearch) {
     // Create a query string for the "Geocoding API" to determine the Longitude and Latitude of the city
     // this is needed to fetch accurate search results from the "5 Day / 3 Hour Forecast" API
     // API endpoint: https://openweathermap.org/api/geocoding-api
-    const queryString = 'http://api.openweathermap.org/geo/1.0/direct?q=' + userInput + '&limit=5&appid=' + apiKey;
+    const queryString = 'http://api.openweathermap.org/geo/1.0/direct?q=' + userInput + '&limit=5&appid=' + apiKey
 
     // Begin jQuery ajax request
     $.ajax({
@@ -76,23 +79,42 @@ function showWeather(userInput, isNewSearch) {
             const longitude = response[0].lon
             const latitude = response[0].lat
 
-            // Create a query string for the "5 Day / 3 Hour Forecast" to determine the Longitude and Latitude of the city
-            // API endpoint: https://openweathermap.org/forecast5
-            const weatherQueryUrl = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey;
+
+
+            // Create a query string for the "Current weather data" to determine the Longitude and Latitude of the city
+            // API endpoint: https://openweathermap.org/current
+            const currentWeatherQueryUrl = 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey
 
             // Begin jQuery ajax request
-            $.ajax({ url: weatherQueryUrl })
+            $.ajax({ url: currentWeatherQueryUrl })
                 .then(function (weatherResponse) {
 
                     console.log(weatherResponse)
-                });
 
-        } else {
+                    // Format unix date stamp 
+                    const date = moment.unix(weatherResponse.dt).format("DD/MM/YYYY")
+                    
+                    // format icon html
+                    const iconUrl = `<img src="http://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
+                    
+                    // create title
+                    const title = $("<h2>").text(`${weatherResponse.name} (${date})`)
 
-            // Show error message to user if City not found
-            showPopup(`${userInput} not found. Please try again`)
-        }
-    });
+                    // append iconUrl to title
+                    title.append(iconUrl)
+
+                    // create todays details
+                    const todayWeather = $("<p>").html(`
+                    Temp: ${weatherResponse.main.temp} °C<br>
+                    Wind: ${weatherResponse.wind.speed} KPH<br>
+                    Humidity: ${weatherResponse.main.humidity}%
+                    `)
+
+                    //append title to forecastToday element
+                    forecastToday.append(title).append(todayWeather)
+
+                    console.log(weatherResponse)
+                })
 
     // If the search is new, then add it to the history
     if (isNewSearch) {
@@ -105,10 +127,10 @@ function showWeather(userInput, isNewSearch) {
 function updateHistory(userInput) {
 
     // Add current search into searchHistory array[]
-    searchHistory.push(userInput);
+    searchHistory.push(userInput)
 
     // Update the localStorage item 'history' with the latest history
-    localStorage.setItem('history', JSON.stringify(searchHistory));
+    localStorage.setItem('history', JSON.stringify(searchHistory))
 
     // Refresh the history results
     loadHistory()
