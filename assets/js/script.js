@@ -46,12 +46,32 @@ searchForm.submit(function (event) {
 
 // Function that will display the weather results (takes user input)
 function showWeather(userInput){
-    
+
+    // Create a query string for the "Geocoding API" to determine the Longitude and Latitude of the city
+    // this is needed to fetch accurate search results from the "5 Day / 3 Hour Forecast" API
     const queryString = 'http://api.openweathermap.org/geo/1.0/direct?q=' + userInput + '&limit=5&appid=' + apiKey;
+    
+    // Begin jQuery ajax request
+    $.ajax({
+        url: queryString,
+        method: "GET"
+      }).then(function(response){
+
+        // Check if the response is not empty, if it is, show an error message to the user
+        if (response.length !== 0){
+
+            console.log(response)
+
+        } else {
+
+        // Show error message to user if City not found
+            showPopup("City not found. Please try again")
+        }
+      });
+
     updateHistory(userInput)
 
 }
-
 
 // Function for showing/saving search history
 function updateHistory(userInput){
