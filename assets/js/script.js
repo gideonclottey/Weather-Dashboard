@@ -5,15 +5,19 @@ const searchForm = $("#search-form")
 const searchInput = $("#search-input")
 
 // Assign variables to target Bootstrap modal title & content
-const modalTitle = $("#messageModalLabel")
-const modelContent = $(".modal-body")
+const popUp = $("#messageModal")
+const popUpTitle = $("#messageModalLabel")
+const popUpContent = $(".modal-body")
 
 searchForm.submit(function(event){
 
     event.preventDefault()
+
+    if(searchInput.val().trim() ==''){
+        popUpTitle.text("Error")
+        popUpContent.text("Please enter a city")
+        popUp.modal("show")
+    }
     console.log(searchInput.val().trim())
-    
-    modalTitle.text(searchInput.val().trim())
-    modelContent.text(searchInput.val().trim())
 
 })
