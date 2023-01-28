@@ -234,7 +234,7 @@ function processForecast(latitude, longitude) {
 
             }
 
-            // We need to sort the uniqueForeCastArray since  
+            // Called renderForecast function with sorted array
             renderForecast(sortDateArray(Object.entries(uniqueForecastArray)))
 
         });
