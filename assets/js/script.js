@@ -185,25 +185,42 @@ function forecast(latitude, longitude) {
     //API endpoint: https://openweathermap.org/forecast5
     const weatherQueryUrl = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey;
 
+
     // Begin jQuery ajax request
     $.ajax({ url: weatherQueryUrl })
         .then(function (forecastResponse) {
 
+            /* 
+            Create an object to store unique date values (forecast API returns 3 hourly forecast for 5 days)
+             however we only want to display unique days, not all the 3 hourly forecasts
+             this comes with a caveat the last 3 hourly forecast is used as the daily forecast
+             this is because the api required is not free.
+             the array keys will be unique based on the "DD/MM/YYYY" format
+            */
+            const uniqueForecastArray = {}
+
+            // creates an array based on the returned value in the api list{} object
             const forecastList = forecastResponse.list;
-            //console.log(forecastList)
 
+            // Get todays date
             const todaysDate = moment()
-            console.log(todaysDate)
 
+            // Loop through each forecast 
             for (let i = 1; i < forecastList.length; i++) {
+
+                // Assign current forecast to variable
                 const weather = forecastList[i];
-                console.log(weather);
-                // Format unix date stamp 
+
+                // Create a moment object with a formatted date based on the weather{}.dt property
                 const date = moment.unix(weather.dt).format("DD/MM/YYYY")
-                
-                if(!todaysDate.isBefore(moment.unix(weather.dt))){
-                    console.log("is after")
-                } 
+
+                // If the current forecast IS NOT the same as today, push it into the uniqueForecastArray{} object
+                if (!todaysDate.isSame(moment.unix(weather.dt), "day")) {
+
+                    // the key becomes unique since it's being assigned a date string "DD/MM/YYYY"
+                    uniqueForecastArray[date] = weather
+                }
+
 
                 // format icon html
                 const iconUrl = `<img src="http://openweathermap.org/img/wn/${weather.weather[0].icon}.png" alt="${weather.weather[0].description}">`
@@ -226,5 +243,23 @@ function forecast(latitude, longitude) {
                 forecastToday.append(title).append(todayWeather)
             }
 
+            console.log(uniqueForecastArray)
+
+            // We need to sort the uniqueForeCastArray since each 
+            sortDateArray(Object.entries(uniqueForecastArray))
+
         });
+}
+
+function sortDateArray(uniqueForecastArray) {
+
+    //console.log(uniqueForecastArray)
+
+    const newArray = uniqueForecastArray.sort(function (value1, value2) {
+        return value1[1].dt - value2[1].dt
+    })
+    //console.log(Object.entries(uniqueForecastArray))
+
+    //console.log(newArray)
+
 }
