@@ -10,6 +10,9 @@ const historyBox = $("#history")
 // Assign variable to div #today
 const forecastToday = $("#today")
 
+// Assign variable to div #forecast
+const forecast5Days = $("#forecast .container .row")
+
 // Assign variables to target Bootstrap modal title & content
 const popUp = $("#messageModal")
 const popUpTitle = $("#messageModalLabel")
@@ -89,8 +92,8 @@ function showWeather(userInput) {
             // Latitude of returned city
             const latitude = response[0].lat
 
-            todaysWeather(latitude, longitude)
-            forecast(latitude, longitude)
+            renderToday(latitude, longitude)
+            processForecast(latitude, longitude)
 
         } else {
 
@@ -143,10 +146,11 @@ function showPopup(message) {
 function clear() {
 
     forecastToday.empty()
+    forecast5Days.empty()
 
 }
 
-function todaysWeather(latitude, longitude) {
+function renderToday(latitude, longitude) {
     // Create a query string for the "Current weather data" to determine the Longitude and Latitude of the city
     // API endpoint: https://openweathermap.org/current
     const currentWeatherQueryUrl = 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey
@@ -158,6 +162,7 @@ function todaysWeather(latitude, longitude) {
             // Format unix date stamp 
             const date = moment.unix(weatherResponse.dt).format("DD/MM/YYYY")
 
+            const div = $("<div>").addClass("p-3")
             // format icon html
             const iconUrl = `<img src="http://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
 
@@ -168,19 +173,20 @@ function todaysWeather(latitude, longitude) {
             title.append(iconUrl)
 
             // create todays details
-            const todayWeather = $("<p>").html(`
+            const text = $("<p>").html(`
                     Temp: ${weatherResponse.main.temp} °C<br>
                     Wind: ${weatherResponse.wind.speed} KPH<br>
                     Humidity: ${weatherResponse.main.humidity}%
                     `)
 
+             div.append(title).append(text)
             //append title to forecastToday element
-            forecastToday.append(title).append(todayWeather)
+            forecastToday.append(div)
 
         })
 }
 
-function forecast(latitude, longitude) {
+function processForecast(latitude, longitude) {
     //Create a query string for the "5 Day / 3 Hour Forecast" to determine the Longitude and Latitude of the city
     //API endpoint: https://openweathermap.org/forecast5
     const weatherQueryUrl = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey;
@@ -209,57 +215,67 @@ function forecast(latitude, longitude) {
             for (let i = 1; i < forecastList.length; i++) {
 
                 // Assign current forecast to variable
-                const weather = forecastList[i];
+                const forecast = forecastList[i];
 
-                // Create a moment object with a formatted date based on the weather{}.dt property
-                const date = moment.unix(weather.dt).format("DD/MM/YYYY")
+                // Create a moment object with a formatted date based on the forecast{}.dt property
+                const date = moment.unix(forecast.dt).format("DD/MM/YYYY")
 
                 // If the current forecast IS NOT the same as today, push it into the uniqueForecastArray{} object
-                if (!todaysDate.isSame(moment.unix(weather.dt), "day")) {
+                if (!todaysDate.isSame(moment.unix(forecast.dt), "day")) {
 
                     // the key becomes unique since it's being assigned a date string "DD/MM/YYYY"
-                    uniqueForecastArray[date] = weather
+                    uniqueForecastArray[date] = forecast
                 }
 
-
-                // format icon html
-                const iconUrl = `<img src="http://openweathermap.org/img/wn/${weather.weather[0].icon}.png" alt="${weather.weather[0].description}">`
-
-                // create title
-                const title = $("<h2>").text(`(${date})`)
-
-                // append iconUrl to title
-                title.append(iconUrl)
-
-                // create todays details
-                const todayWeather = $("<p>").html(`
-                        Temp: ${weather.main.temp} °C<br>
-                        Wind: ${weather.wind.speed} KPH<br>
-                        Humidity: ${weather.main.humidity}%
-                        `)
-
-
-                //append title to forecastToday element
-                forecastToday.append(title).append(todayWeather)
             }
 
-            console.log(uniqueForecastArray)
-
             // We need to sort the uniqueForeCastArray since each 
-            sortDateArray(Object.entries(uniqueForecastArray))
+            renderForecast(sortDateArray(Object.entries(uniqueForecastArray)))
 
         });
 }
 
+function renderForecast(forecast){
+
+    $("#forecast .container").prepend("<h2>5 Day Forecast:</h2>")
+
+    forecast.forEach(function(element){
+
+        // Create a bootstrap col
+        const col = $("<div>").addClass("col")
+
+        const div = $("<div>").addClass("p-2")
+
+        // Assign date to variable
+        const date = element[0]
+
+        // format icon html
+        const icon = `<img src="http://openweathermap.org/img/wn/${element[1].weather[0].icon}.png" alt="${element[1].weather[0].description}">`
+
+        // create title
+        const title = $("<h3>").text(`(${date})`)
+
+        // create todays details
+        const todayWeather = $("<p>").html(`
+                Temp: ${element[1].main.temp} °C<br>
+                Wind: ${element[1].wind.speed} KPH<br>
+                Humidity: ${element[1].main.humidity}%
+                `)
+        //append title to col 
+        div.append(title).append(icon).append(todayWeather)
+        
+        //append col to forecast5Days element
+
+        col.append(div)
+        forecast5Days.append(col)                            
+
+    })
+}
+
+// A function to sort the array that will be used for the 5-day forecast
 function sortDateArray(uniqueForecastArray) {
-
-    //console.log(uniqueForecastArray)
-
     const newArray = uniqueForecastArray.sort(function (value1, value2) {
         return value1[1].dt - value2[1].dt
     })
-    //console.log(Object.entries(uniqueForecastArray))
-
-    //console.log(newArray)
-
+    return newArray
 }

@@ -1,3 +1,15 @@
+/* Heading styles */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight:bold
+}
+#forecast h2{
+    font-size:1.5em
+}
+#forecast h3{
+    font-size:1.2em
+}
+
 /* Set default styles for buttons with class .btn */
 #search-button.btn, .btn {
     border-radius: 5px;
@@ -8,4 +20,12 @@
 /* Set the style for the search button */
 #search-button.search-button {
     background-color: #5098E6;
+}
+/* Set individual forecast div styles */
+#forecast .container .col div {
+    background-color:#5098E6
+}
+/* Styles for today weather report */
+#today div {
+	border: 1px solid black;
 }
