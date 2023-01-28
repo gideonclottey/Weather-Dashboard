@@ -78,7 +78,7 @@ function showWeather(userInput) {
     // Create a query string for the "Geocoding API" to determine the Longitude and Latitude of the city
     // this is needed to fetch accurate search results from the "5 Day / 3 Hour Forecast" API
     // API endpoint: https://openweathermap.org/api/geocoding-api
-    const queryString = 'http://api.openweathermap.org/geo/1.0/direct?q=' + userInput + '&limit=5&appid=' + apiKey
+    const queryString = 'https://api.openweathermap.org/geo/1.0/direct?q=' + userInput + '&limit=5&appid=' + apiKey
 
     // Begin jQuery ajax request
     $.ajax({
@@ -158,7 +158,7 @@ function clear() {
 function renderToday(latitude, longitude) {
     // Create a query string for the "Current weather data" to determine the Longitude and Latitude of the city
     // API endpoint: https://openweathermap.org/current
-    const currentWeatherQueryUrl = 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey
+    const currentWeatherQueryUrl = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey
 
     // Begin jQuery ajax request
     $.ajax({ url: currentWeatherQueryUrl })
@@ -169,7 +169,7 @@ function renderToday(latitude, longitude) {
 
             const div = $("<div>").addClass("p-3")
             // format icon html
-            const iconUrl = `<img src="http://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
+            const iconUrl = `<img src="https://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
 
             // create title
             const title = $("<h2>").text(`${weatherResponse.name} (${date})`)
@@ -194,7 +194,7 @@ function renderToday(latitude, longitude) {
 function processForecast(latitude, longitude) {
     //Create a query string for the "5 Day / 3 Hour Forecast" to determine the Longitude and Latitude of the city
     //API endpoint: https://openweathermap.org/forecast5
-    const weatherQueryUrl = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey;
+    const weatherQueryUrl = 'https://api.openweathermap.org/data/2.5/forecast?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey;
 
 
     // Begin jQuery ajax request
@@ -257,7 +257,7 @@ function renderForecast(forecast){
         const date = element[0]
 
         // format icon html
-        const icon = `<img src="http://openweathermap.org/img/wn/${element[1].weather[0].icon}.png" alt="${element[1].weather[0].description}">`
+        const icon = `<img src="https://openweathermap.org/img/wn/${element[1].weather[0].icon}.png" alt="${element[1].weather[0].description}">`
 
         // create title
         const title = $("<h3>").text(`${date}`)
