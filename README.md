@@ -22,7 +22,7 @@ Below the main weather report there is a 5 day forecast.
 
 Clone or download this project as a zip file & extract to your websites root directory.
 
-Simply open the `index.html` file in your browser to use the scheduler.
+Simply open the `index.html` file in your browser to use the application.
 
 ### Usage
 
