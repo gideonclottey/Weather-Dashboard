@@ -11,7 +11,7 @@ const historyBox = $("#history")
 const forecastToday = $("#today")
 
 // Assign variable to div #forecast
-const forecast5Days = $("#forecast .container .row")
+const forecast5Days = $("#forecast")
 
 // Assign variables to target Bootstrap modal title & content
 const popUp = $("#messageModal")
@@ -27,7 +27,7 @@ const searchHistory = JSON.parse(localStorage.getItem('history')) || []
 loadHistory()
 
 // Apply jQuery event on form submission
-$(document).on('click', '.btn', function (event) {
+$(document).on('click', '.button', function (event) {
 
     // Prevent default form functionality 
     event.preventDefault()
@@ -56,7 +56,6 @@ $(document).on('click', '.btn', function (event) {
         } else {
 
             // If the search is new, then add it to the history
-
             updateHistory(userInput)
 
             // showWeather() function
@@ -73,6 +72,8 @@ function showWeather(userInput) {
     // Call clear function to clear existing html
     clear()
 
+    $(".container-fluid.loader").show()
+
     // Create a query string for the "Geocoding API" to determine the Longitude and Latitude of the city
     // this is needed to fetch accurate search results from the "5 Day / 3 Hour Forecast" API
     // API endpoint: https://openweathermap.org/api/geocoding-api
@@ -84,6 +85,8 @@ function showWeather(userInput) {
         method: "GET"
     }).then(function (response) {
 
+        // Hide the bootstrap loader
+        $(".container-fluid.loader").hide()
         // Check if the response is not empty, if it is, show an error message to the user
         if (response.length !== 0) {
 
@@ -127,7 +130,7 @@ function loadHistory() {
     if (JSON.parse(localStorage.getItem('history'))) {
         // Loop through each history item, create a button and append to the historyBox element
         JSON.parse(localStorage.getItem('history')).forEach(function (element) {
-            const button = $("<button>").addClass("btn mt-2").text(element).attr("data-city", element)
+            const button = $("<button>").addClass("btn mt-2 button").text(element).attr("data-city", element)
             historyBox.prepend(button)
         })
     }
@@ -143,10 +146,11 @@ function showPopup(message) {
     popUp.modal("show")
 }
 
+// A function to clear html elements
 function clear() {
 
     forecastToday.empty()
-    forecast5Days.empty()
+    $("#forecast .container").remove()
 
 }
 
@@ -237,9 +241,11 @@ function processForecast(latitude, longitude) {
 
 function renderForecast(forecast){
 
-    $("#forecast .container").prepend("<h2>5 Day Forecast:</h2>")
+    const container = $("<div>").addClass("container")
+    const row = $("<div>").addClass("row")
 
     forecast.forEach(function(element){
+
 
         // Create a bootstrap col
         const col = $("<div>").addClass("col")
@@ -253,7 +259,7 @@ function renderForecast(forecast){
         const icon = `<img src="http://openweathermap.org/img/wn/${element[1].weather[0].icon}.png" alt="${element[1].weather[0].description}">`
 
         // create title
-        const title = $("<h3>").text(`(${date})`)
+        const title = $("<h3>").text(`${date}`)
 
         // create todays details
         const todayWeather = $("<p>").html(`
@@ -261,15 +267,21 @@ function renderForecast(forecast){
                 Wind: ${element[1].wind.speed} KPH<br>
                 Humidity: ${element[1].main.humidity}%
                 `)
-        //append title to col 
+        //append title to div 
         div.append(title).append(icon).append(todayWeather)
         
-        //append col to forecast5Days element
-
+        //append div to col
         col.append(div)
-        forecast5Days.append(col)                            
+        //append col to row
+        row.append(col)                        
 
     })
+    // append row to container
+    container.append(row)
+    // add title to container
+    container.prepend("<h2>5 Day Forecast:</h2>")
+    // append container to forecast section
+    forecast5Days.append(container)      
 }
 
 // A function to sort the array that will be used for the 5-day forecast

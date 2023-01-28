@@ -23,9 +23,15 @@ h1, h2, h3, h4, h5, h6,
 }
 /* Set individual forecast div styles */
 #forecast .container .col div {
-    background-color:#5098E6
+    background-color:#2D3E50;
+    color:#fff
 }
 /* Styles for today weather report */
 #today div {
 	border: 1px solid black;
+}
+
+/*Container with bootstrap loader*/
+.container-fluid.loader{
+    display: none;
 }
