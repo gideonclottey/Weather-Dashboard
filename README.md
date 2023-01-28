@@ -28,7 +28,7 @@ Simply open the `index.html` file in your browser to use the application.
 
 Simply enter the city you would like to see the weather for and click search. If there are no results, the application will prompt you on the error.
 
-The search history will even when you refresh the page.
+The search history will remain even when you refresh the page.
 
 ## Technologies
 ![JS](https://img.shields.io/badge/javascript-69%25-blue) ![CSS](https://img.shields.io/badge/html-6%25-green)  ![HTML](https://img.shields.io/badge/html-25%25-red) 
