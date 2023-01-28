@@ -72,6 +72,7 @@ function showWeather(userInput) {
     // Call clear function to clear existing html
     clear()
 
+    // Show the bootstrap loader
     $(".container-fluid.loader").show()
 
     // Create a query string for the "Geocoding API" to determine the Longitude and Latitude of the city
@@ -233,7 +234,7 @@ function processForecast(latitude, longitude) {
 
             }
 
-            // We need to sort the uniqueForeCastArray since each 
+            // We need to sort the uniqueForeCastArray since  
             renderForecast(sortDateArray(Object.entries(uniqueForecastArray)))
 
         });
