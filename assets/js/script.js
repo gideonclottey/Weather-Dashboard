@@ -243,13 +243,13 @@ function processForecast(latitude, longitude) {
 function renderForecast(forecast){
 
     const container = $("<div>").addClass("container")
-    const row = $("<div>").addClass("row")
+    const row = $("<div>").addClass("row rows-col-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5")
 
     forecast.forEach(function(element){
 
 
         // Create a bootstrap col
-        const col = $("<div>").addClass("col")
+        const col = $("<div>").addClass("col mb-2")
 
         const div = $("<div>").addClass("p-2")
 

@@ -22,7 +22,7 @@ h1, h2, h3, h4, h5, h6,
     background-color: #5098E6;
 }
 /* Set individual forecast div styles */
-#forecast .container .col div {
+#forecast .container > div > div > div {
     background-color:#2D3E50;
     color:#fff
 }
@@ -34,4 +34,13 @@ h1, h2, h3, h4, h5, h6,
 /*Container with bootstrap loader*/
 .container-fluid.loader{
     display: none;
+}
+
+/* Minor media query tweeks */
+@media screen and (max-width:1052PX) {
+    /* Make logo image sligtly smaller on small devices */
+    .navbar-brand .logo {
+        max-width: 250px;
+    }
+
 }
