@@ -1,4 +1,4 @@
-# Challenge - Work Day Scheduler
+# Challenge - Weather Dashboard
 
 ## Description
 
