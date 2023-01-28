@@ -52,15 +52,23 @@ $(document).on('click', '.btn', function (event) {
 
         } else {
 
+            // If the search is new, then add it to the history
+
+            updateHistory(userInput)
+
             // showWeather() function
-            showWeather(userInput, true)
+            showWeather(userInput)
+
         }
     }
 
 })
 
 // Function that will display the weather results (takes user input)
-function showWeather(userInput, isNewSearch) {
+function showWeather(userInput) {
+
+    // Call clear function to clear existing html
+    clear()
 
     // Create a query string for the "Geocoding API" to determine the Longitude and Latitude of the city
     // this is needed to fetch accurate search results from the "5 Day / 3 Hour Forecast" API
@@ -81,40 +89,8 @@ function showWeather(userInput, isNewSearch) {
             // Latitude of returned city
             const latitude = response[0].lat
 
-            // Create a query string for the "Current weather data" to determine the Longitude and Latitude of the city
-            // API endpoint: https://openweathermap.org/current
-            const currentWeatherQueryUrl = 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey
-
-            // Begin jQuery ajax request
-            $.ajax({ url: currentWeatherQueryUrl })
-                .then(function (weatherResponse) {
-
-                    console.log(weatherResponse)
-
-                    // Format unix date stamp 
-                    const date = moment.unix(weatherResponse.dt).format("DD/MM/YYYY")
-                    
-                    // format icon html
-                    const iconUrl = `<img src="http://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
-                    
-                    // create title
-                    const title = $("<h2>").text(`${weatherResponse.name} (${date})`)
-
-                    // append iconUrl to title
-                    title.append(iconUrl)
-
-                    // create todays details
-                    const todayWeather = $("<p>").html(`
-                    Temp: ${weatherResponse.main.temp} °C<br>
-                    Wind: ${weatherResponse.wind.speed} KPH<br>
-                    Humidity: ${weatherResponse.main.humidity}%
-                    `)
-
-                    //append title to forecastToday element
-                    forecastToday.append(title).append(todayWeather)
-
-                    console.log(weatherResponse)
-                })
+            todaysWeather(latitude, longitude)
+            forecast(latitude, longitude)
 
         } else {
 
@@ -122,11 +98,6 @@ function showWeather(userInput, isNewSearch) {
             showPopup(`${userInput} not found. Please try again`)
         }
     })
-
-    // If the search is new, then add it to the history
-    if (isNewSearch) {
-        updateHistory(userInput)
-    }
 
 }
 
@@ -167,4 +138,93 @@ function showPopup(message) {
     popUpContent.text(message)
     // trigger popup to appear
     popUp.modal("show")
+}
+
+function clear() {
+
+    forecastToday.empty()
+
+}
+
+function todaysWeather(latitude, longitude) {
+    // Create a query string for the "Current weather data" to determine the Longitude and Latitude of the city
+    // API endpoint: https://openweathermap.org/current
+    const currentWeatherQueryUrl = 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey
+
+    // Begin jQuery ajax request
+    $.ajax({ url: currentWeatherQueryUrl })
+        .then(function (weatherResponse) {
+
+            // Format unix date stamp 
+            const date = moment.unix(weatherResponse.dt).format("DD/MM/YYYY")
+
+            // format icon html
+            const iconUrl = `<img src="http://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
+
+            // create title
+            const title = $("<h2>").text(`${weatherResponse.name} (${date})`)
+
+            // append iconUrl to title
+            title.append(iconUrl)
+
+            // create todays details
+            const todayWeather = $("<p>").html(`
+                    Temp: ${weatherResponse.main.temp} °C<br>
+                    Wind: ${weatherResponse.wind.speed} KPH<br>
+                    Humidity: ${weatherResponse.main.humidity}%
+                    `)
+
+            //append title to forecastToday element
+            forecastToday.append(title).append(todayWeather)
+
+        })
+}
+
+function forecast(latitude, longitude) {
+    //Create a query string for the "5 Day / 3 Hour Forecast" to determine the Longitude and Latitude of the city
+    //API endpoint: https://openweathermap.org/forecast5
+    const weatherQueryUrl = 'http://api.openweathermap.org/data/2.5/forecast?units=metric&lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey;
+
+    // Begin jQuery ajax request
+    $.ajax({ url: weatherQueryUrl })
+        .then(function (forecastResponse) {
+
+            const forecastList = forecastResponse.list;
+            //console.log(forecastList)
+
+            const todaysDate = moment()
+            console.log(todaysDate)
+
+            for (let i = 1; i < forecastList.length; i++) {
+                const weather = forecastList[i];
+                console.log(weather);
+                // Format unix date stamp 
+                const date = moment.unix(weather.dt).format("DD/MM/YYYY")
+                
+                if(!todaysDate.isBefore(moment.unix(weather.dt))){
+                    console.log("is after")
+                } 
+
+                // format icon html
+                const iconUrl = `<img src="http://openweathermap.org/img/wn/${weather.weather[0].icon}.png" alt="${weather.weather[0].description}">`
+
+                // create title
+                const title = $("<h2>").text(`(${date})`)
+
+                // append iconUrl to title
+                title.append(iconUrl)
+
+                // create todays details
+                const todayWeather = $("<p>").html(`
+                        Temp: ${weather.main.temp} °C<br>
+                        Wind: ${weather.wind.speed} KPH<br>
+                        Humidity: ${weather.main.humidity}%
+                        `)
+
+
+                //append title to forecastToday element
+                forecastToday.append(title).append(todayWeather)
+            }
+
+        });
 }
